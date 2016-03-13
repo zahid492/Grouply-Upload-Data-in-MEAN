@@ -8,7 +8,6 @@ var app        = express();
 var morgan     = require('morgan');
 var cors=require('cors');
 var http = require('http').Server(app);
-var io = require('socket.io')(http);
 
 
 // configure app
