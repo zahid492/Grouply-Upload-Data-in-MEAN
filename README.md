@@ -7,7 +7,7 @@ Then `cd ../client-side` and `bower install` </br>
 After that, change the mongodb Uri in database config object at app/config/db.js </br>
 Finally, run: </br>
 
-	node server.js </br>
+	`node server.js` </br>
 
 `http://localhost:8081/`  </br>
 
