@@ -1,0 +1,24 @@
+{
+  "name": "CSV Uplod By define Group & Chunk Data Insert In Db",
+  "authors": [
+    "zahidur rahman <zahid@synchronousict.net>"
+  ],
+  "description": "",
+  "main": "scripts/app.js",
+  "moduleType": [],
+  "license": "MIT",
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "angular": "~1.5.0",
+    "angular-resource": "~1.5.0",
+    "bootstrap": "~3.3.6"
+  }
+}

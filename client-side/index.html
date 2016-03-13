@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html ng-app="csvApp">
+
+<head>
+  <title>CSV Upload</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/csv.css" rel="stylesheet">
+  <style type="text/css" href="csv.css"></style>
+</head>
+
+<body>
+  <div class="container" ng-controller="UploadController">
+    <form class="form-signin" name="uploadForm" ng-model="uploadForm" method="post" enctype="multipart/form-data" novalidation>
+      <h2 class="form-signin-heading">Grouply Upload Data</h2>
+       <label for="inputName" class="sr-only">Name</label> 
+       <input type="text" ng-model="name" id="inputName" class="form-control" placeholder="Your Name" required autofocus> 
+       <label for="inputName" class="sr-only">Group Name</label> 
+       <input type="text" ng-model="groupName" id="inputName" class="form-control" placeholder="Group Name" required autofocus> <label for="inputName" class="sr-only">Split at</label> 
+       <input type="number" ng-model="split_at" min="1" id="inputName" class="form-control" placeholder="Split at" required autofocus> </br>
+      <div class="col-sm-12"> 
+      <input type="file" file-model="myFile" class="form-control" id="fileInput" validFile accept="text/csv" required> 
+      <span><a href="/Sample.csv" target='_blank' download>Sample CSV file</a></span>
+      </div> 
+      </br> 
+      <button type="submit" ng-disabled="uploadForm.$invalid" ng-click="uploadFile()" class="btn btn-lg btn-primary btn-block">Upload
+        </button> 
+   </form> 
+    <pre>
+      <code>
+      <p style="color:green;text-align:center;">{{message}}</p>
+      {{data}}
+      </code>
+    </pre> 
+ </div>
+  <!-- /container -->
+</body>
+<script type="text/javascript" src="bower_components/jquery/dist/jquery.js"></script>
+<script type="text/javascript" src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="bower_components/angular/angular.min.js"></script>
+<script type="text/javascript" src="bower_components/angular-resource/angular-resource.min.js"></script>
+<script type="text/javascript">
+'use strict';
+/**
+ * @ngdoc overview
+ * @name telecomApp
+ * @description
+ * # telecomApp
+ *
+ * Main module of the application.
+ */
+var csvApp = angular.module('csvApp', ['ngResource']);
+angular.module('csvApp').controller('UploadController', function($scope, UploadFactory) {
+
+  $scope.uploadFile = function() {
+  	$scope.data='';
+  	$scope.message ='';
+
+    var information = {
+      name: $scope.name,
+      groupName: $scope.groupName,
+      split_at: $scope.split_at
+    }
+    var file = $scope.myFile;
+    console.log(file);
+    if (file.type === 'text/csv') {
+
+      var promisePost = UploadFactory.uploadFileToUrl(file, information);
+      promisePost.then(function(response) {
+      	$scope.message=response.data.message;
+      	if(response.data.user){
+      	UploadFactory.getData(response.data.user._id).then(function(responseGet) {
+          console.log(responseGet);
+          $scope.data = JSON.stringify(responseGet.data, null, 4);
+        }, function(err) {
+          // body...
+          console.log(err);
+        });
+
+      	}
+
+      }, function(err) {
+        console.log(err);
+      });
+    } else {
+      $scope.message = 'Please choose a valid CSV file';
+    }
+  };
+});
+angular.module('csvApp').service('UploadFactory', function($http) {
+  this.uploadFileToUrl = function(file, information) {
+    var uploadUrl = "http://localhost:8081/api/file_upload";
+    var fd = new FormData();
+    fd.append('file', file);
+    fd.append('name', information.name);
+    fd.append('groupName', information.groupName);
+    fd.append('split_at', information.split_at);
+    var request = $http({
+      method: 'post',
+      url: uploadUrl,
+      transformRequest: angular.identity,
+      headers: { 'Content-Type': undefined },
+      data: fd
+    });
+    return request;
+  };
+  this.getData = function(id) {
+    var request = $http({
+      method: 'get',
+      url: 'http://localhost:8081/api/user/' + id
+    });
+    return request;
+  };
+});
+angular.module('csvApp').directive('fileModel', ['$parse', function($parse) {
+  return {
+    restrict: 'A',
+    link: function(scope, element, attrs) {
+      var model = $parse(attrs.fileModel);
+      var modelSetter = model.assign;
+      element.bind('change', function() {
+        scope.$apply(function() {
+          modelSetter(scope, element[0].files[0]);
+        });
+      });
+    }
+  };
+}]);
+
+angular.module('csvApp').directive('validFile',function(){
+  return {
+    require:'ngModel',
+    link:function(scope,el,attrs,ngModel){
+      //change event is fired when file is selected
+      el.bind('change',function(){
+        scope.$apply(function(){
+          ngModel.$setViewValue(el.val());
+          ngModel.$render();
+        })
+      })
+    }
+  }
+});
+</script>
+
+</html>
