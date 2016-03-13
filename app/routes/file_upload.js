@@ -5,7 +5,7 @@ var Converter = require("csvtojson").Converter;
 
 
 
-module.exports = function(router, app, io) {
+module.exports = function(router, app) {
   var model = require('../models/collectionModel');
 
   router.route('/file_upload/')
