@@ -12,7 +12,7 @@ module.exports = function(router,app,io)
 		res.json({ message: 'Welcome to the API Site:D!' });	
 	});
 
-	require('./routes/file_upload')(router,app,io);
+	require('./routes/file_upload')(router,app);
 	// on routes that end in /api
 	// ----------------------------------------------------
 	
