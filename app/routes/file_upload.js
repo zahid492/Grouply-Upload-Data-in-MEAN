@@ -19,7 +19,7 @@ module.exports = function(router, app) {
 
           var tempPath = file.path;
           var extension = path.extname(file.name);
-          var targetPath = path.resolve('../csv-chunk-upload/files/' + file.name);  //file upload in directory
+          var targetPath = path.resolve('../../files/' + file.name);  //file upload in directory
           fs.rename(tempPath, targetPath, function(err) {  //rename file
             if (err) {
               return res.json(err);
@@ -92,7 +92,7 @@ module.exports = function(router, app) {
                     }
                     ////////////////END OF INSERT DATA IN DB/////////////
                   });
-                  require("fs").createReadStream("../csv-chunk-upload/files/" + file.name).pipe(converter); //start JSON coverter stream
+                  require("fs").createReadStream("../../files/" + file.name).pipe(converter); //start JSON coverter stream
 
                 }
                 model.User.findById(newUser._id, function(err, user) {
