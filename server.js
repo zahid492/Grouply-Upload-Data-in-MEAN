@@ -33,21 +33,13 @@ app.get('/', function(req, res) {
 // create our router
 var router = express.Router();
 
-require('./app/routes')(router,app,io);
+require('./app/routes')(router,app);
 
 // REGISTER OUR ROUTES -------------------------------
 app.use('/api', router);
 
-
-
-
-
-
 // Add headers
 app.use(function (req, res, next) {
-
-    // Website you wish to allow to connect
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:9000');
 
     // Request methods you wish to allow
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
